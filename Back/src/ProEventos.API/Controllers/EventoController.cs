@@ -15,7 +15,29 @@ namespace ProEventos.API.Controllers
     [Route("api/[controller]")]
     public class EventoController : ControllerBase
     {
-
+        public IEnumerable<Evento> _evento = new Evento[]
+        {
+            new Evento()
+            {
+                EventoId = 1,
+                Tema = "Angular 11 e .Net 5",
+                Local = "Belo Horizonte",
+                Lote = "1º Lote",
+                QtdPessoas = 250,
+                DataEvento = DateTime.Now.AddDays(2).ToString("dd/MM/yyyy"),
+                ImagemURL = "foto.png"
+            },
+            new Evento()
+            {
+                EventoId = 2,
+                Tema = "Angular e Suas Novidades",
+                Local = "São Paulo",
+                Lote = "2º Lote",
+                QtdPessoas = 350,
+                DataEvento = DateTime.Now.AddDays(3).ToString("dd/MM/yyyy"),
+                ImagemURL = "foto.png"
+            }
+        };
         public EventoController()
         { 
         }
@@ -23,29 +45,21 @@ namespace ProEventos.API.Controllers
         [HttpGet]
         public IEnumerable<Evento> Get()
         {
-            return new Evento[] {
-            
-                new Evento()
-                {
-                    EventoId = 1,
-                    Tema = "Angular e .NET",
-                    Local = "Belo Horizonte",
-                    DataEvento = DateTime.Now.AddDays(2).ToString(),  
-                    QtdPessoas = 250,
-                    Lote = "1º Lote",
-                    ImagemURL = "foto.png"
-                },
-                new Evento()
-                {
-                    EventoId = 2,  
-                    Tema = "Angular e .NET",
-                    Local = "Sao Paulo",
-                    DataEvento = DateTime.Now.AddDays(2).ToString(),  
-                    QtdPessoas = 350,
-                    Lote = "1º Lote",
-                    ImagemURL = "foto.png"
-                }
-            };
+            return _evento;
         }
+
+        [HttpGet("{id}")]
+        public IEnumerable<Evento> GetById(int id)
+        {
+            return _evento.Where(e => e.EventoId == id);
+        }
+
+
+        [HttpPut]
+        public string Put()
+        {
+            return "Exemplo de Put";
+        }
+
     }
 }

@@ -11,6 +11,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using ProEventos.API.Data;
+using Microsoft.EntityFrameworkCore; // Adicionado: extensão UseSqlite requer este namespace e o pacote Microsoft.EntityFrameworkCore.Sqlite
 
 namespace ProEventos.API
 {
@@ -26,7 +28,11 @@ namespace ProEventos.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
+            services.AddDbContext<DataContext>(
+                    contex =>
+                    {
+                        contex.UseSqlite(Configuration.GetConnectionString("Default"));
+                    });
             services.AddControllers();
             services.AddCors();
             services.AddSwaggerGen(c =>
