@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.Tracing;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using ProEventos.Domain;
@@ -22,6 +24,16 @@ namespace ProEventos.Persistence.Contextos
         {
             modelBuilder.Entity<PalestranteEvento>()
                 .HasKey(PE => new { PE.EventoId, PE.PalestranteId });
+
+            modelBuilder.Entity<EventOpcode>()
+                .HasMany(e => e.RedesSociais)
+                .WithOne(rs => rs.Eventos)
+                .OnDelete(DeleteBeHavior.Cascade);
+
+            modelBuilder.Entity<Palestrante>()
+                .HasMany(e => e.Evento)
+                .WithOne(rs => rs.PalestrantesEventos)
+                .OnDelete(DeleteBeHavior.Cascade);
         }
     }
 }

@@ -38,20 +38,22 @@
         <tr>
           @if (exibirImagem) {
             <td>
-              <img
-                [src]="'assets/' + evento.imagemURL"
+              <img  [collapse]="!exibirImagem"
+                    [IsAnimated]="true"
+                
+                [src]="'assets/' +evento.imagemURL"
                 [style.width.px]="larguraImagem"
                 [style.margin.px]="margemImagem"
               >
             </td>
           }
 
-          <td>{{ evento.eventoId }}</td>
+          <td>{{ evento.id }}</td>
           <td>{{ evento.tema }}</td>
           <td>{{ evento.local }}</td>
           <td>{{ evento.dataEvento }}</td>
           <td>{{ evento.qtdPessoas }}</td>
-          <td>{{ evento.lote }}</td>
+          <td>{{ evento.lotes[0].nome}}</td>
           <td>
             <button class="btn btn-sm btn-warning me-2">Editar</button>
             <button class="btn btn-sm btn-danger">Excluir</button>

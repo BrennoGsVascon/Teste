@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
+import { response } from 'express';
+import { EventoService } from '../services/evento.service';
+import { Evento } from '../models/Evento';
+import { error } from 'node:console';
 
 @Component({
   selector: 'app-eventos',
@@ -10,29 +13,34 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './eventos.scss',
 })
 export class EventosComponent implements OnInit {
-  public eventos: any[] = [];
-  public eventosFiltrados: any[] = [];
+  public eventos: Evento[] = [];
+  public eventosFiltrados: Evento[] = [];
 
   public larguraImagem = 150;
   public margemImagem = 2;
   public exibirImagem = true;
-
-  private _filtroLista = '';
+  private filtroListado: string = '';
 
   public get filtroLista(): string {
-    return this._filtroLista;
+    return this.filtroListado;
   }
 
   public set filtroLista(value: string) {
-    this._filtroLista = value;
-    this.eventosFiltrados = this.filtroLista
-      ? this.filtrarEventos(this.filtroLista)
-      : this.eventos;
+    this.filtroListado = value;
+    this.eventosFiltrados = this.filtroLista ? this.filtrarEventos(this.filtroLista) : this.eventos;
   }
 
-  constructor(private http: HttpClient) {}
+  public filtrarEventos(filtrarPor: string): Evento[] {
+    filtrarPor = filtrarPor.toLocaleLowerCase();
+    return this.eventos.filter(
+      evento => evento.tema.toLocaleLowerCase().indexOf(filtrarPor) !== -1 ||
+      evento.local.toLocaleLowerCase().indexOf(filtrarPor) !== -1
+    );
+  }
 
-  ngOnInit(): void {
+  constructor(private eventoService: EventoService) {}
+
+  public ngOnInit(): void {
     this.getEventos();
   }
 
@@ -40,25 +48,14 @@ export class EventosComponent implements OnInit {
     this.exibirImagem = !this.exibirImagem;
   }
 
-  public filtrarEventos(filtrarPor: string): any[] {
-    filtrarPor = filtrarPor.toLowerCase();
-
-    return this.eventos.filter(
-      evento =>
-        evento.tema.toLowerCase().includes(filtrarPor) ||
-        evento.local.toLowerCase().includes(filtrarPor)
-    );
-  }
-
   public getEventos(): void {
-    this.http.get<any[]>('https://localhost:5001/api/eventos').subscribe({
-      next: response => {
-        this.eventos = response;
-        this.eventosFiltrados = response;
+    const observer = {
+      next: (eventos: Evento[]) => {
+        this.eventos = eventos;
+        this.eventosFiltrados = this.eventos;
       },
-      error: error => console.log(error)
-    });
+      error: (error: any) => console.log(error),
+    };
+    this.eventoService.getEventos().subscribe(observer);
   }
 }
-
-
