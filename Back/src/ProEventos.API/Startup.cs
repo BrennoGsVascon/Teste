@@ -11,8 +11,13 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
-using ProEventos.Persistence;
 using Microsoft.EntityFrameworkCore; // Adicionado: extensão UseSqlite requer este namespace e o pacote Microsoft.EntityFrameworkCore.Sqlite
+using ProEventos.Application;
+using ProEventos.Application.Contratos;
+using ProEventos.Persistence;
+using ProEventos.Persistence.Contratos;
+using ProEventos.Persistence.Contextos;
+
 
 namespace ProEventos.API
 {
@@ -29,14 +34,23 @@ namespace ProEventos.API
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<ProEventosContext>(
-                    contex => contex.UseSqlite(Configuration.GetConnectionString("Default"))
-             );
-                    
+                context => context.UseSqlite(Configuration.GetConnectionString("Default"))
+            );
             services.AddControllers();
+
+            services.AddScoped<IEventoService, EventoService>();
+            services.AddScoped<IGeralPersist, GeralPersist>();
+            services.AddScoped<IEventoPersist, EventoPersist>();
+
+            
             services.AddCors();
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "ProEventos.API", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo
+               { 
+                 Title = "ProEventos.API", 
+                 Version = "v1" 
+                });
             });
         }
 
@@ -47,7 +61,10 @@ namespace ProEventos.API
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "ProEventos.API v1"));
+                app.UseSwaggerUI(c =>
+                {
+                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "ProEventos.API v1");
+                });
             }
 
             app.UseHttpsRedirection();
