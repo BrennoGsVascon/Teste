@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
+import { CollapseModule } from 'ngx-bootstrap/collapse';
 import { response } from 'express';
 import { EventoService } from '../services/evento.service';
 import { Evento } from '../models/Evento';
@@ -8,32 +10,32 @@ import { error } from 'node:console';
 @Component({
   selector: 'app-eventos',
   standalone: true,
-  imports: [FormsModule],
+  imports: [CollapseModule, FormsModule],
   templateUrl: './eventos.html',
   styleUrl: './eventos.scss',
 })
 export class EventosComponent implements OnInit {
-  public eventos: Evento[] = [];
-  public eventosFiltrados: Evento[] = [];
+  public eventos: any;
+  public eventosFiltrados: any = [];
 
   public larguraImagem = 150;
   public margemImagem = 2;
   public exibirImagem = true;
-  private filtroListado: string = '';
+  private _filtroLista: string = '';
 
   public get filtroLista(): string {
-    return this.filtroListado;
+    return this._filtroLista;
   }
 
   public set filtroLista(value: string) {
-    this.filtroListado = value;
+    this._filtroLista = value;
     this.eventosFiltrados = this.filtroLista ? this.filtrarEventos(this.filtroLista) : this.eventos;
   }
 
-  public filtrarEventos(filtrarPor: string): Evento[] {
+  filtrarEventos(filtrarPor: string): any[] {
     filtrarPor = filtrarPor.toLocaleLowerCase();
     return this.eventos.filter(
-      evento => evento.tema.toLocaleLowerCase().indexOf(filtrarPor) !== -1 ||
+      (evento: { tema: string; local: string; }) => evento.tema.toLocaleLowerCase().indexOf(filtrarPor) !== -1 ||
       evento.local.toLocaleLowerCase().indexOf(filtrarPor) !== -1
     );
   }

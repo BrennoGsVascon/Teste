@@ -25,15 +25,15 @@ namespace ProEventos.Persistence.Contextos
             modelBuilder.Entity<PalestranteEvento>()
                 .HasKey(PE => new { PE.EventoId, PE.PalestranteId });
 
-            modelBuilder.Entity<EventOpcode>()
+            modelBuilder.Entity<Evento>()
                 .HasMany(e => e.RedesSociais)
-                .WithOne(rs => rs.Eventos)
-                .OnDelete(DeleteBeHavior.Cascade);
+                .WithOne(rs => rs.Evento)
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Palestrante>()
-                .HasMany(e => e.Evento)
-                .WithOne(rs => rs.PalestrantesEventos)
-                .OnDelete(DeleteBeHavior.Cascade);
+                .HasMany(e => e.RedesSociais)
+                .WithOne(rs => rs.Palestrante)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }
